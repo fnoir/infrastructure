@@ -1,0 +1,9 @@
+---
+
+- name: Preseed
+  connection: local
+  hosts: localhost
+  roles:
+  - preseed
+  vars_files:
+    - ../vars/preseed.yml

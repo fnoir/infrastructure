@@ -1,0 +1,9 @@
+---
+
+preseed_default_ntp_server: fr.pool.ntp.org
+preseed_default_timezone: Europe/Paris
+preseed_default_user_username: preseed
+preseed_default_user_password: ChangeMe1!
+preseed_directory: /tmp/preseed
+preseed_environment:
+  - { name: "test" }

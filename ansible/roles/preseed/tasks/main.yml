@@ -1,0 +1,58 @@
+---
+
+- name: Install prerequisites
+  apt:
+    pkg:
+    - wget
+    - genisoimage
+    - xorriso
+    - isolinux
+    - rsync
+    - gzip
+    - cpio
+    - syslinux
+    - gpg
+    - dirmngr
+    install_recommends: no
+    state: latest
+    update_cache: yes
+    cache_valid_time: 3600
+  become: yes
+
+- name: Remove preseed directory
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ preseed_directory }}/preseed_creator/loopdir"
+    - "{{ preseed_directory }}/config"
+    - "{{ preseed_directory }}/iso"
+
+- name: Create preseed tree view
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  with_items:
+    - "{{ preseed_directory }}"
+    - "{{ preseed_directory }}/config"
+    - "{{ preseed_directory }}/iso"
+
+- name: Copy preseed script
+  copy:
+    src: "preseed_creator.sh"
+    dest: "{{ preseed_directory }}"
+    mode: '0755'
+
+- name: Create preseed.cfg file for each environment
+  template:
+    src: "preseed.cfg.j2"
+    dest: "{{ preseed_directory }}/config/{{ item.name }}.cfg"
+  with_items: "{{ preseed_environment }}"
+
+- name: Generate preseeded ISO image
+  shell: ./preseed_creator.sh -x -p {{ preseed_directory }}/config/{{ item.name }}.cfg -o {{ preseed_directory }}/iso/{{ item.name }}.iso
+  args:
+    executable: /bin/bash
+    chdir: "{{ preseed_directory }}"
+  with_items: "{{ preseed_environment }}"

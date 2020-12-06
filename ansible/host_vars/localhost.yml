@@ -1,0 +1,8 @@
+---
+
+preseed_default_user_username: hulk
+preseed_default_user_password: "{{ vault_preseed_default_user_password }}"
+preseed_environment:
+  - { name: "nuc-zigbee" }
+  - { name: "vm-jeedom", packages: "qemu-guest-agent" }
+  - { name: "vm-network", packages: "qemu-guest-agent", ip: "10.0.0.255" }
